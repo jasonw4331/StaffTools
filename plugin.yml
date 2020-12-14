@@ -1,0 +1,6 @@
+name: StaffTools
+main: jasonwynn10\StaffTools\Main
+version: 0.1.0
+api: 3.0.0
+description: "A generally useful plugin which provides multiple staff tools"
+author: "jasonwynn10"
