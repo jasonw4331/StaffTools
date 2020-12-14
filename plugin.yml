@@ -4,3 +4,17 @@ version: 0.1.0
 api: 3.0.0
 description: "A generally useful plugin which provides multiple staff tools"
 author: "jasonwynn10"
+commands:
+  staff:
+    usage: "/staff [survival: bool]"
+    description: ""
+    permission: "stafftools.cmd"
+
+permissions:
+  stafftools.cmd:
+    default: op
+    children:
+      stafftools.cmd.staff:
+        default: op
+      stafftools.cmd.cheat:
+        default: op
