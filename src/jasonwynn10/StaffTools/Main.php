@@ -32,9 +32,9 @@ class Main extends PluginBase {
 			$session = Main::getSession($sender->getName());
 			if($session === null)
 				return false;
-			if($session->getMode() === PlayerSession::STAFF) {
+			if($session->getMode() === PlayerSession::STAFF) { // already in staff mode
 				// TODO: fix nametag
-				// TODO: take tool set in hotbar
+				// TODO: take tool set from hotbar
 				// TODO: undo permission level changes
 				$this->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
 				foreach($this->getServer()->getOnlinePlayers() as $player) {
@@ -43,7 +43,7 @@ class Main extends PluginBase {
 				$sender->setGamemode(Player::SURVIVAL);
 				$session->setMode(PlayerSession::NORMAL);
 				$sender->namedtag = $session->getSaveData();
-			}else{ // already in staff mode
+			}else{
 				$session->setSaveData($sender->namedtag);
 				$sender->save();
 				$session->setMode(PlayerSession::STAFF);
@@ -65,9 +65,9 @@ class Main extends PluginBase {
 		$session = Main::getSession($sender->getName());
 		if($session === null)
 			return false;
-		if($session->getMode() === PlayerSession::STAFF) {
+		if($session->getMode() === PlayerSession::CHEAT) { // already in cheat mode
 			// TODO: fix nametag
-			// TODO: take tool set in hotbar
+			// TODO: take tool set from hotbar
 			// TODO: undo permission level changes
 			$this->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
 			foreach($this->getServer()->getOnlinePlayers() as $player) {
@@ -77,7 +77,6 @@ class Main extends PluginBase {
 			$session->setMode(PlayerSession::NORMAL);
 			$sender->namedtag = $session->getSaveData();
 		}else{
-			$session->setSaveData($sender->namedtag);
 			$sender->save();
 			$session->setMode(PlayerSession::CHEAT);
 			//$sender->setGamemode(Player::SURVIVAL);
