@@ -4,12 +4,17 @@ namespace jasonwynn10\StaffTools;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\permission\PermissionAttachment;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 
 class Main extends PluginBase {
 	/** @var PlayerSession[] $sessions */
 	private static $sessions = [];
+	/** @var PermissionAttachment[] $att */
+	private $att = [];
+	/** @var bool[][] $data */
+	private $data = [];
 
 	public function onEnable() {
 		new EventListener($this);
@@ -91,5 +96,27 @@ class Main extends PluginBase {
 			// TODO: change nametag
 		}
 		return true;
+	}
+
+	public function startPermissionSession(Player $player, int $mode) : void {
+		if(!isset($this->data[$mode]))
+			throw new \UnexpectedValueException("Mode number $mode is not valid");
+		$att = $this->att($player);
+		$att->setPermissions($this->data[$mode]);
+	}
+
+	private function att(Player $player) : PermissionAttachment {
+		if(!isset($this->att[$player->getId()])){
+			return $this->att[$player->getId()] = $player->addAttachment($this);
+		}
+		return $this->att[$player->getId()];
+	}
+
+	public function endPermissionSession(Player $player) : void {
+		if(isset($this->att[$player->getId()])){
+			$this->att[$player->getId()]->clearPermissions();
+			$player->removeAttachment($this->att[$player->getId()]);
+			unset($this->att[$player->getId()]);
+		}
 	}
 }
