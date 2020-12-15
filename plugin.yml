@@ -6,7 +6,7 @@ description: "A generally useful plugin which provides multiple staff tools"
 author: "jasonwynn10"
 commands:
   staff:
-    usage: "/staff [survival: bool]"
+    usage: "/staff [cheatMode: bool]"
     description: ""
     permission: "stafftools.cmd"
 
