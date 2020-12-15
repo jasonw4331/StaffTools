@@ -5,6 +5,7 @@ namespace jasonwynn10\StaffTools;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDataSaveEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 
 class EventListener implements Listener {
 
@@ -18,7 +19,7 @@ class EventListener implements Listener {
 
 	public function onPlayerJoin(PlayerJoinEvent $event) : void {
 		$player = $event->getPlayer();
-		Main::addSession(new PlayerSession($player->getName(), PlayerSession::NORMAL, null));
+		Main::addSession(new PlayerSession($player->getName(), PlayerSession::NORMAL, $player->getGamemode(), $player->namedtag));
 	}
 
 	public function onPlayerSaveEvent(PlayerDataSaveEvent $event) : void {
