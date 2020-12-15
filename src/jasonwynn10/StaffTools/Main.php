@@ -34,66 +34,75 @@ class Main extends PluginBase {
 			return true;
 		}
 		if(!isset($args[0]) or ((bool)$args[0]) === false) { // staff mode
-			$session = Main::getSession($sender->getName());
-			if($session === null)
-				return false;
-			if($session->getMode() === PlayerSession::STAFF) { // already in staff mode
-				// TODO: fix nametag
-				// TODO: take tool set from hotbar
-				// TODO: undo permission level changes
-				$this->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
-				foreach($this->getServer()->getOnlinePlayers() as $player) {
-					$player->showPlayer($sender);
-				}
-				$sender->setGamemode(Player::SURVIVAL);
-				$session->setMode(PlayerSession::NORMAL);
-				$sender->namedtag = $session->getSaveData();
-			}else{
-				$session->setSaveData($sender->namedtag);
-				$sender->save();
-				$session->setMode(PlayerSession::STAFF);
-				$sender->getInventory()->clearAll(true);
-				$sender->getArmorInventory()->clearAll(true);
-				$sender->setGamemode(Player::CREATIVE);
-				foreach($this->getServer()->getOnlinePlayers() as $player) {
-					$psession = Main::getSession($player->getName());
-					if($psession !== null and $psession->getMode() === PlayerSession::NORMAL)
-						$player->hidePlayer($sender);
-				}
-				$this->getServer()->removePlayerListData($sender->getUniqueId());
-				// TODO: permission level changes
-				// TODO: give tool set in hotbar
-				// TODO: change nametag
-			}
+			$this->toggleStaffMode($sender);
+			return true;
 		}
 		// cheat mode
-		$session = Main::getSession($sender->getName());
+		$this->toggleCheatMode($sender);
+		return true;
+	}
+
+	public function toggleStaffMode(Player $player) : bool {
+		$session = Main::getSession($player->getName());
+		if($session === null)
+			return false;
+		if($session->getMode() === PlayerSession::STAFF) { // already in staff mode
+			// TODO: fix display tag
+			// TODO: take tool set from hotbar
+			$this->endPermissionSession($player);
+			$this->getServer()->updatePlayerListData($player->getUniqueId(), $player->getId(), $player->getDisplayName(), $player->getSkin(), $player->getXuid());
+			foreach($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
+				$onlinePlayer->showPlayer($player);
+			}
+			$player->setGamemode($session->getGamemode());
+			$session->setMode(PlayerSession::NORMAL);
+			$player->namedtag = $session->getSaveData();
+		}else{
+			$session->setGamemode($player->getGamemode());
+			$session->setSaveData($player->namedtag);
+			$player->save();
+			$session->setMode(PlayerSession::STAFF);
+			$player->getInventory()->clearAll(true);
+			$player->getArmorInventory()->clearAll(true);
+			$player->setGamemode(Player::CREATIVE);
+			foreach($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
+				$psession = Main::getSession($onlinePlayer->getName());
+				if($psession !== null and $psession->getMode() === PlayerSession::NORMAL)
+					$onlinePlayer->hidePlayer($player);
+			}
+			$this->getServer()->removePlayerListData($player->getUniqueId());
+			$this->startPermissionSession($player, PlayerSession::STAFF);
+			// TODO: give tool set in hotbar
+			// TODO: change display tag
+		}
+		return true;
+	}
+
+	public function toggleCheatMode(Player $player) : bool {
+		$session = Main::getSession($player->getName());
 		if($session === null)
 			return false;
 		if($session->getMode() === PlayerSession::CHEAT) { // already in cheat mode
-			// TODO: fix nametag
-			// TODO: take tool set from hotbar
-			// TODO: undo permission level changes
-			$this->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
-			foreach($this->getServer()->getOnlinePlayers() as $player) {
-				$player->showPlayer($sender);
+			$this->endPermissionSession($player);
+			$this->getServer()->updatePlayerListData($player->getUniqueId(), $player->getId(), $player->getDisplayName(), $player->getSkin(), $player->getXuid());
+			foreach($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
+				$onlinePlayer->showPlayer($player);
 			}
-			$sender->setGamemode(Player::SURVIVAL);
+			$player->setAllowFlight(false);
 			$session->setMode(PlayerSession::NORMAL);
-			$sender->namedtag = $session->getSaveData();
+			//$sender->namedtag = $session->getSaveData();
 		}else{
-			$sender->save();
+			$session->setGamemode($player->getGamemode());
+			$player->save();
 			$session->setMode(PlayerSession::CHEAT);
-			//$sender->setGamemode(Player::SURVIVAL);
-			foreach($this->getServer()->getOnlinePlayers() as $player) {
-				$psession = Main::getSession($player->getName());
+			$player->setAllowFlight(true);
+			foreach($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
+				$psession = Main::getSession($onlinePlayer->getName());
 				if($psession !== null and $psession->getMode() === PlayerSession::NORMAL)
-					$player->hidePlayer($sender);
+					$onlinePlayer->hidePlayer($player);
 			}
-			$this->getServer()->removePlayerListData($sender->getUniqueId());
-			// TODO: permission level changes
-			// TODO: give tool set in hotbar
-			// TODO: change nametag
+			$this->getServer()->removePlayerListData($player->getUniqueId());
+			$this->startPermissionSession($player, PlayerSession::CHEAT);
 		}
 		return true;
 	}
