@@ -17,8 +17,10 @@ final class PlayerSession {
 	private $username;
 	/** @var int */
 	private $mode = self::NORMAL;
+	/** @var int */
+	private $normalGamemode = Player::SURVIVAL;
 	/** @var mixed[][] */
-	private $preHotbarInv;
+	private $preHotbarInv = [];
 	/** @var string[] */
 	private $displayNames = [];
 	/** @var string */
@@ -201,5 +203,19 @@ final class PlayerSession {
 	 */
 	public function setMode(int $mode) : void {
 		$this->mode = $mode;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getGamemode() : int {
+		return $this->normalGamemode;
+	}
+
+	/**
+	 * @param int $gamemode
+	 */
+	public function setGamemode(int $gamemode) : void {
+		$this->normalGamemode = $gamemode;
 	}
 }

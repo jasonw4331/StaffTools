@@ -33,11 +33,10 @@ class Main extends PluginBase {
 			$sender->sendMessage("Please run this command in-game.");
 			return true;
 		}
-		if(!isset($args[0]) or ((bool)$args[0]) === false) { // staff mode
+		if(!isset($args[0]) or ((bool)$args[0]) === false) {
 			$this->toggleStaffMode($sender);
 			return true;
 		}
-		// cheat mode
 		$this->toggleCheatMode($sender);
 		return true;
 	}
@@ -56,7 +55,6 @@ class Main extends PluginBase {
 			}
 			$player->setGamemode($session->getGamemode());
 			$session->setMode(PlayerSession::NORMAL);
-			$player->namedtag = $session->getSaveData();
 		}else{
 			$session->setGamemode($player->getGamemode());
 			$session->setSaveData($player->namedtag);
